@@ -1,0 +1,136 @@
+package com.rootssky.battlepass;
+
+import com.rootssky.battlepass.commands.BattlePassCommand;
+import com.rootssky.battlepass.gui.BattlePassGUI;
+import com.rootssky.battlepass.gui.MissionGUI;
+import com.rootssky.battlepass.listeners.MissionListener;
+import com.rootssky.battlepass.listeners.PlayerListener;
+import com.rootssky.battlepass.managers.ConfigManager;
+import com.rootssky.battlepass.managers.DatabaseManager;
+import com.rootssky.battlepass.managers.MissionManager;
+import com.rootssky.battlepass.managers.RewardManager;
+import com.rootssky.battlepass.models.PlayerProfile;
+import com.rootssky.battlepass.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class BattlePassPlugin extends JavaPlugin {
+
+    private static BattlePassPlugin instance;
+    private DatabaseManager databaseManager;
+    private ConfigManager configManager;
+    private MissionManager missionManager;
+    private RewardManager rewardManager;
+
+    public ConcurrentHashMap<UUID, PlayerProfile> playerCache = new ConcurrentHashMap<>();
+
+    @Override
+    public void onEnable() {
+        instance = this;
+
+        saveDefaultConfig();
+
+        configManager = new ConfigManager(this);
+        configManager.reload();
+
+        databaseManager = new DatabaseManager(this, getDataFolder());
+        databaseManager.init();
+
+        missionManager = new MissionManager(this);
+        missionManager.loadMissions();
+        missionManager.startResetScheduler();
+
+        rewardManager = new RewardManager(this);
+        rewardManager.setupEconomy();
+
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new MissionListener(this), this);
+        getServer().getPluginManager().registerEvents(new GUIListener(), this);
+
+        BattlePassCommand commandHandler = new BattlePassCommand(this);
+        getCommand("battlepass").setExecutor(commandHandler);
+        getCommand("battlepass").setTabCompleter(commandHandler);
+        getCommand("passeadmin").setExecutor(commandHandler);
+        getCommand("passeadmin").setTabCompleter(commandHandler);
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new com.rootssky.battlepass.placeholders.RootsSkyPlaceholderExpansion(this).register();
+            Utils.log("<green>PlaceholderAPI integrado!");
+        }
+
+        Utils.log("<green>BattlePass ativado com sucesso!");
+    }
+
+    @Override
+    public void onDisable() {
+        List<PlayerProfile> perfis = new ArrayList<>(playerCache.values());
+        playerCache.clear();
+
+        if (databaseManager != null && !perfis.isEmpty()) {
+            databaseManager.flushAll(perfis).join();
+        }
+
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            rewardManager.limparCooldown(online.getUniqueId());
+            missionManager.removePlayer(online.getUniqueId());
+        }
+
+        missionManager.stopResetScheduler();
+
+        if (databaseManager != null) {
+            databaseManager.close();
+        }
+
+        Utils.log("<red>BattlePass desativado.");
+    }
+
+    public static BattlePassPlugin getInstance() {
+        return instance;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public MissionManager getMissionManager() {
+        return missionManager;
+    }
+
+    public RewardManager getRewardManager() {
+        return rewardManager;
+    }
+
+    private class GUIListener implements Listener {
+
+        @EventHandler
+        public void aoClicarInventario(InventoryClickEvent event) {
+            InventoryHolder holder = event.getInventory().getHolder();
+
+            if (holder instanceof BattlePassGUI) {
+                event.setCancelled(true);
+                if (event.getWhoClicked() instanceof Player player) {
+                    BattlePassGUI.aoClicar(BattlePassPlugin.this, player, event.getRawSlot(), event.getCurrentItem());
+                }
+            } else if (holder instanceof MissionGUI) {
+                event.setCancelled(true);
+                if (event.getWhoClicked() instanceof Player player) {
+                    MissionGUI.aoClicar(BattlePassPlugin.this, player, event.getRawSlot(), event.getCurrentItem());
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,1199 @@
+settings:
+  xp-formula: "level * 150"
+  max-level: 100
+  premium-xp-multiplier: 1.5
+
+gui:
+  # Titulos das GUIs (usam MiniMessage)
+  title-battlepass: "<gradient:#00cccc:#00ffff>Passe de Batalha</gradient> <dark_gray>— <gradient:#55ff55:#00aa00>RootsSky</gradient>"
+  title-missions: "<gradient:#55ff55:#00aa00>Missoes</gradient> <dark_gray>— <gradient:#00cccc:#00ffff>Passe de Batalha</gradient>"
+
+  # Paginacao
+  items-per-page: 8
+
+  # Cooldown do botao "Resgatar Tudo" (em segundos)
+  resgatar-tudo-cooldown: 3
+
+  # Materiais do Passe de Batalha (GUI principal)
+  material-free-available: CYAN_STAINED_GLASS_PANE
+  material-free-claimed: GRAY_STAINED_GLASS_PANE
+  material-free-locked: RED_STAINED_GLASS_PANE
+  material-vip-available: ORANGE_STAINED_GLASS_PANE
+  material-vip-claimed: GRAY_STAINED_GLASS_PANE
+  material-vip-locked: RED_STAINED_GLASS_PANE
+  material-vip-no-access: BLACK_STAINED_GLASS_PANE
+  material-divider: GOLDEN_CHESTPLATE
+  material-divider-no-access: BARRIER
+  material-navigation-arrow: ARROW
+  material-page-indicator: PAPER
+  material-close: BARRIER
+  material-fill: CYAN_STAINED_GLASS_PANE
+  material-border: GRAY_STAINED_GLASS_PANE
+  material-label-free: LIME_BANNER
+  material-label-vip: YELLOW_BANNER
+  material-label-vip-no-access: GRAY_BANNER
+  material-cabecalho-bg: GRAY_CONCRETE
+  material-cabecalho-player: PLAYER_HEAD
+  material-recompensa-free: CHEST
+  material-recompensa-vip: GOLD_BLOCK
+  material-resgatar-tudo: HOPPER
+  material-livro-missoes: BOOK
+
+  # Materiais da GUI de Missoes
+  mission-indicator-daily: IRON_BLOCK
+  mission-indicator-weekly: GOLD_BLOCK
+  mission-indicator-monthly: DIAMOND_BLOCK
+  mission-back-button: ARROW
+  mission-close-button: BARRIER
+  mission-fill: GRAY_CONCRETE
+  mission-book: BOOK
+
+  # Barra de progresso
+  progress:
+    show-progress-bars: true
+    progress-bar-char-filled: "▓"
+    progress-bar-char-empty: "░"
+    progress-bar-length: 10
+
+messages:
+  prefix: "<gradient:#55ff55:#00aa00><bold>[RootsSky]</bold></gradient> "
+  welcome: "<gray>Olá <white>%player%</white>! Seu nível do Passe: <gold>%level%</gold>"
+  level-up: "<gradient:#ffaa00:#ffff55>⚡ <bold>LEVEL UP!</bold> Agora você é Nível <gold>%level%</gold>!</gradient>"
+  xp-gained: "<gray>+%xp% XP</gray>"
+  no-permission: "<red>✗ Sem permissão.</red>"
+  reloaded: "<green>✓ Configurações recarregadas!</green>"
+  profile: "<yellow>%player%</yellow> <gray>- Nível: <gold>%level%</gold> | XP: <gold>%xp%</gold>/<gold>%required%</gold>"
+  premium-only: "<gradient:#ffaa00:#ffff55>⭐ Isso é exclusivo para jogadores <bold>VIP</bold>!</gradient>"
+  reward-claimed: "<green>✅ Recompensa do nível <bold>%nivel%</bold> resgatada!</green>"
+  reward-already: "<gray>⚠️ Você já resgatou esta recompensa.</gray>"
+  reward-locked: "<red>🔒 Nível <bold>%nivel%</bold> necessário para esta recompensa.</red>"
+  vip-required: "<gradient:#ffaa00:#ffff55>⭐ Esta recompensa é exclusiva para jogadores <bold>VIP</bold>!</gradient>"
+  no-reward: "<gray>❌ Nenhuma recompensa configurada para este nível.</gray>"
+  mission-claimed: "<green>Recompensa da missao <bold>%mission%</bold> resgatada! <dark_gray>(+%xp% XP)%xp_bonus%</dark_gray></green>"
+  mission-reset: "<gray>🔄 Missões %period% foram resetadas!</gray>"
+
+missions:
+  daily:
+    mine_50:
+      type: MINERAR
+      target: 50
+      xp_reward: 30
+      reset_hours: 24
+      icon: IRON_PICKAXE
+      name: "Minerador Iniciante"
+      description: "Minere 50 blocos de minério"
+    kill_20:
+      type: MATAR_MOBS
+      target: 20
+      xp_reward: 40
+      reset_hours: 24
+      icon: IRON_SWORD
+      name: "Cacador de Mobs"
+      description: "Elimine 20 mobs hostis"
+    fish_15:
+      type: PESCAR
+      target: 15
+      xp_reward: 35
+      reset_hours: 24
+      icon: FISHING_ROD
+      name: "Pescador"
+      description: "Pesque 15 peixes"
+    craft_10:
+      type: CRAFTAR
+      target: 10
+      xp_reward: 25
+      reset_hours: 24
+      icon: CRAFTING_TABLE
+      name: "Artesao"
+      description: "Crafte 10 itens"
+    harvest_64:
+      type: COLHER
+      target: 64
+      xp_reward: 30
+      reset_hours: 24
+      icon: GOLDEN_HOE
+      name: "Fazendeiro"
+      description: "Colha 64 plantacoes"
+    eat_5:
+      type: COMER
+      target: 5
+      xp_reward: 15
+      reset_hours: 24
+      icon: COOKED_BEEF
+      name: "Guloso"
+      description: "Coma 5 itens"
+    build_200:
+      type: COLOCAR_BLOCOS
+      target: 200
+      xp_reward: 50
+      reset_hours: 24
+      icon: BRICKS
+      name: "Construtor"
+      description: "Coloque 200 blocos"
+
+  weekly:
+    kill_100:
+      type: MATAR_MOBS
+      target: 100
+      xp_reward: 150
+      reset_hours: 168
+      icon: DIAMOND_SWORD
+      name: "Guerreiro Semanal"
+      description: "Elimine 100 mobs hostis"
+    mine_200:
+      type: MINERAR
+      target: 200
+      xp_reward: 200
+      reset_hours: 168
+      icon: DIAMOND_PICKAXE
+      name: "Mineiro Profissional"
+      description: "Mine 200 blocos de minério"
+    fish_50:
+      type: PESCAR
+      target: 50
+      xp_reward: 120
+      reset_hours: 168
+      icon: FISHING_ROD
+      name: "Mestre Pescador"
+      description: "Pesque 50 peixes"
+    craft_50:
+      type: CRAFTAR
+      target: 50
+      xp_reward: 180
+      reset_hours: 168
+      icon: CRAFTING_TABLE
+      name: "Fabricante Semanal"
+      description: "Crafte 50 itens"
+
+  monthly:
+    kill_500:
+      type: MATAR_MOBS
+      target: 500
+      xp_reward: 500
+      reset_hours: 720
+      icon: NETHERITE_SWORD
+      name: "Lenda de Guerra"
+      description: "Elimine 500 mobs hostis"
+    mine_1000:
+      type: MINERAR
+      target: 1000
+      xp_reward: 600
+      reset_hours: 720
+      icon: NETHERITE_PICKAXE
+      name: "Escavador Lendario"
+      description: "Mine 1000 blocos de minério"
+
+recompensas:
+  gratis:
+    nivel-1:
+      dinheiro: 100
+      itens:
+        - COBBLESTONE:32
+      comandos: []
+    nivel-2:
+      dinheiro: 150
+      itens:
+        - IRON_ORE:8
+      comandos: []
+    nivel-3:
+      dinheiro: 200
+      itens:
+        - OAK_LOG:16
+      comandos: []
+    nivel-4:
+      dinheiro: 250
+      itens:
+        - GOLD_ORE:4
+      comandos: []
+    nivel-5:
+      dinheiro: 300
+      itens:
+        - IRON_INGOT:16
+      comandos: []
+    nivel-6:
+      dinheiro: 350
+      itens:
+        - COAL:32
+      comandos: []
+    nivel-7:
+      dinheiro: 400
+      itens:
+        - LAPIS_LAZULI:16
+      comandos: []
+    nivel-8:
+      dinheiro: 450
+      itens:
+        - REDSTONE:24
+      comandos: []
+    nivel-9:
+      dinheiro: 500
+      itens:
+        - IRON_BLOCK:2
+      comandos: []
+    nivel-10:
+      dinheiro: 600
+      itens:
+        - DIAMOND:5
+      comandos:
+        - "broadcast %player% resgatou a recompensa do nível 10!"
+    nivel-11:
+      dinheiro: 650
+      itens:
+        - EMERALD:3
+      comandos: []
+    nivel-12:
+      dinheiro: 700
+      itens:
+        - GOLD_BLOCK:1
+      comandos: []
+    nivel-13:
+      dinheiro: 750
+      itens:
+        - DIAMOND:3
+      comandos: []
+    nivel-14:
+      dinheiro: 800
+      itens:
+        - IRON_INGOT:32
+      comandos: []
+    nivel-15:
+      dinheiro: 850
+      itens:
+        - GOLD_INGOT:16
+      comandos: []
+    nivel-16:
+      dinheiro: 900
+      itens:
+        - LAPIS_BLOCK:2
+      comandos: []
+    nivel-17:
+      dinheiro: 950
+      itens:
+        - REDSTONE_BLOCK:2
+      comandos: []
+    nivel-18:
+      dinheiro: 1000
+      itens:
+        - EMERALD:5
+      comandos: []
+    nivel-19:
+      dinheiro: 1050
+      itens:
+        - DIAMOND:4
+      comandos: []
+    nivel-20:
+      dinheiro: 1200
+      itens:
+        - DIAMOND_BLOCK:1
+      comandos: []
+    nivel-21:
+      dinheiro: 1250
+      itens:
+        - GOLD_INGOT:32
+      comandos: []
+    nivel-22:
+      dinheiro: 1300
+      itens:
+        - IRON_BLOCK:4
+      comandos: []
+    nivel-23:
+      dinheiro: 1350
+      itens:
+        - EMERALD:8
+      comandos: []
+    nivel-24:
+      dinheiro: 1400
+      itens:
+        - DIAMOND:6
+      comandos: []
+    nivel-25:
+      dinheiro: 1500
+      itens:
+        - DIAMOND:16
+        - GOLDEN_APPLE:4
+      comandos: []
+    nivel-26:
+      dinheiro: 1550
+      itens:
+        - NETHERITE_SCRAP:1
+      comandos: []
+    nivel-27:
+      dinheiro: 1600
+      itens:
+        - DIAMOND_BLOCK:2
+      comandos: []
+    nivel-28:
+      dinheiro: 1650
+      itens:
+        - EMERALD_BLOCK:2
+      comandos: []
+    nivel-29:
+      dinheiro: 1700
+      itens:
+        - GOLD_BLOCK:4
+      comandos: []
+    nivel-30:
+      dinheiro: 1800
+      itens:
+        - DIAMOND:10
+      comandos: []
+    nivel-31:
+      dinheiro: 1850
+      itens:
+        - IRON_BLOCK:8
+      comandos: []
+    nivel-32:
+      dinheiro: 1900
+      itens:
+        - GOLD_INGOT:32
+      comandos: []
+    nivel-33:
+      dinheiro: 1950
+      itens:
+        - EMERALD:12
+      comandos: []
+    nivel-34:
+      dinheiro: 2000
+      itens:
+        - DIAMOND:8
+      comandos: []
+    nivel-35:
+      dinheiro: 2100
+      itens:
+        - DIAMOND_BLOCK:2
+      comandos: []
+    nivel-36:
+      dinheiro: 2150
+      itens:
+        - NETHERITE_SCRAP:2
+      comandos: []
+    nivel-37:
+      dinheiro: 2200
+      itens:
+        - EMERALD_BLOCK:4
+      comandos: []
+    nivel-38:
+      dinheiro: 2250
+      itens:
+        - GOLD_BLOCK:8
+      comandos: []
+    nivel-39:
+      dinheiro: 2300
+      itens:
+        - DIAMOND:12
+      comandos: []
+    nivel-40:
+      dinheiro: 2400
+      itens:
+        - DIAMOND_BLOCK:3
+      comandos: []
+    nivel-41:
+      dinheiro: 2450
+      itens:
+        - IRON_BLOCK:16
+      comandos: []
+    nivel-42:
+      dinheiro: 2500
+      itens:
+        - GOLD_INGOT:64
+      comandos: []
+    nivel-43:
+      dinheiro: 2550
+      itens:
+        - EMERALD:16
+      comandos: []
+    nivel-44:
+      dinheiro: 2600
+      itens:
+        - DIAMOND:10
+      comandos: []
+    nivel-45:
+      dinheiro: 2700
+      itens:
+        - DIAMOND_BLOCK:4
+      comandos: []
+    nivel-46:
+      dinheiro: 2750
+      itens:
+        - NETHERITE_SCRAP:3
+      comandos: []
+    nivel-47:
+      dinheiro: 2800
+      itens:
+        - EMERALD_BLOCK:6
+      comandos: []
+    nivel-48:
+      dinheiro: 2850
+      itens:
+        - GOLD_BLOCK:12
+      comandos: []
+    nivel-49:
+      dinheiro: 2900
+      itens:
+        - DIAMOND:16
+      comandos: []
+    nivel-50:
+      dinheiro: 3000
+      itens:
+        - NETHERITE_INGOT:2
+      comandos:
+        - "broadcast %player% alcancou o nível 50 do Battle Pass!"
+    nivel-51:
+      dinheiro: 3100
+      itens:
+        - DIAMOND_BLOCK:6
+      comandos: []
+    nivel-52:
+      dinheiro: 3150
+      itens:
+        - EMERALD_BLOCK:8
+      comandos: []
+    nivel-53:
+      dinheiro: 3200
+      itens:
+        - NETHERITE_SCRAP:4
+      comandos: []
+    nivel-54:
+      dinheiro: 3250
+      itens:
+        - GOLD_BLOCK:16
+      comandos: []
+    nivel-55:
+      dinheiro: 3300
+      itens:
+        - DIAMOND:20
+      comandos: []
+    nivel-56:
+      dinheiro: 3400
+      itens:
+        - DIAMOND_BLOCK:8
+      comandos: []
+    nivel-57:
+      dinheiro: 3450
+      itens:
+        - EMERALD:24
+      comandos: []
+    nivel-58:
+      dinheiro: 3500
+      itens:
+        - NETHERITE_SCRAP:5
+      comandos: []
+    nivel-59:
+      dinheiro: 3550
+      itens:
+        - GOLD_BLOCK:20
+      comandos: []
+    nivel-60:
+      dinheiro: 3600
+      itens:
+        - NETHERITE_INGOT:3
+      comandos: []
+    nivel-61:
+      dinheiro: 3700
+      itens:
+        - DIAMOND_BLOCK:10
+      comandos: []
+    nivel-62:
+      dinheiro: 3750
+      itens:
+        - EMERALD_BLOCK:12
+      comandos: []
+    nivel-63:
+      dinheiro: 3800
+      itens:
+        - NETHERITE_SCRAP:6
+      comandos: []
+    nivel-64:
+      dinheiro: 3850
+      itens:
+        - GOLD_BLOCK:24
+      comandos: []
+    nivel-65:
+      dinheiro: 3900
+      itens:
+        - DIAMOND:32
+      comandos: []
+    nivel-66:
+      dinheiro: 4000
+      itens:
+        - DIAMOND_BLOCK:12
+      comandos: []
+    nivel-67:
+      dinheiro: 4050
+      itens:
+        - EMERALD:32
+      comandos: []
+    nivel-68:
+      dinheiro: 4100
+      itens:
+        - NETHERITE_SCRAP:7
+      comandos: []
+    nivel-69:
+      dinheiro: 4150
+      itens:
+        - GOLD_BLOCK:28
+      comandos: []
+    nivel-70:
+      dinheiro: 4200
+      itens:
+        - NETHERITE_INGOT:4
+      comandos: []
+    nivel-71:
+      dinheiro: 4300
+      itens:
+        - DIAMOND_BLOCK:14
+      comandos: []
+    nivel-72:
+      dinheiro: 4350
+      itens:
+        - EMERALD_BLOCK:16
+      comandos: []
+    nivel-73:
+      dinheiro: 4400
+      itens:
+        - NETHERITE_SCRAP:8
+      comandos: []
+    nivel-74:
+      dinheiro: 4450
+      itens:
+        - GOLD_BLOCK:32
+      comandos: []
+    nivel-75:
+      dinheiro: 4500
+      itens:
+        - NETHERITE_INGOT:5
+      comandos: []
+    nivel-76:
+      dinheiro: 4600
+      itens:
+        - DIAMOND_BLOCK:16
+      comandos: []
+    nivel-77:
+      dinheiro: 4650
+      itens:
+        - EMERALD_BLOCK:20
+      comandos: []
+    nivel-78:
+      dinheiro: 4700
+      itens:
+        - NETHERITE_SCRAP:10
+      comandos: []
+    nivel-79:
+      dinheiro: 4750
+      itens:
+        - GOLD_BLOCK:36
+      comandos: []
+    nivel-80:
+      dinheiro: 4800
+      itens:
+        - NETHERITE_INGOT:6
+      comandos: []
+    nivel-81:
+      dinheiro: 4900
+      itens:
+        - DIAMOND_BLOCK:18
+      comandos: []
+    nivel-82:
+      dinheiro: 4950
+      itens:
+        - EMERALD:48
+      comandos: []
+    nivel-83:
+      dinheiro: 5000
+      itens:
+        - NETHERITE_SCRAP:12
+      comandos: []
+    nivel-84:
+      dinheiro: 5050
+      itens:
+        - GOLD_BLOCK:40
+      comandos: []
+    nivel-85:
+      dinheiro: 5100
+      itens:
+        - DIAMOND:48
+      comandos: []
+    nivel-86:
+      dinheiro: 5200
+      itens:
+        - DIAMOND_BLOCK:20
+      comandos: []
+    nivel-87:
+      dinheiro: 5250
+      itens:
+        - EMERALD_BLOCK:24
+      comandos: []
+    nivel-88:
+      dinheiro: 5300
+      itens:
+        - NETHERITE_SCRAP:14
+      comandos: []
+    nivel-89:
+      dinheiro: 5350
+      itens:
+        - GOLD_BLOCK:44
+      comandos: []
+    nivel-90:
+      dinheiro: 5400
+      itens:
+        - NETHERITE_INGOT:8
+      comandos: []
+    nivel-91:
+      dinheiro: 5500
+      itens:
+        - DIAMOND_BLOCK:24
+      comandos: []
+    nivel-92:
+      dinheiro: 5600
+      itens:
+        - EMERALD_BLOCK:28
+      comandos: []
+    nivel-93:
+      dinheiro: 5700
+      itens:
+        - NETHERITE_SCRAP:16
+      comandos: []
+    nivel-94:
+      dinheiro: 5800
+      itens:
+        - GOLD_BLOCK:48
+      comandos: []
+    nivel-95:
+      dinheiro: 6000
+      itens:
+        - NETHERITE_INGOT:10
+      comandos: []
+    nivel-96:
+      dinheiro: 6200
+      itens:
+        - DIAMOND_BLOCK:28
+      comandos: []
+    nivel-97:
+      dinheiro: 6400
+      itens:
+        - EMERALD_BLOCK:32
+      comandos: []
+    nivel-98:
+      dinheiro: 6600
+      itens:
+        - NETHERITE_BLOCK:1
+      comandos: []
+    nivel-99:
+      dinheiro: 6800
+      itens:
+        - NETHERITE_INGOT:12
+      comandos: []
+    nivel-100:
+      dinheiro: 10000
+      itens:
+        - NETHERITE_BLOCK:1
+        - BEACON:1
+      comandos:
+        - "broadcast %player% completou o Battle Pass!"
+  vip:
+    nivel-1:
+      dinheiro: 250
+      itens:
+        - IRON_INGOT:32
+      comandos: []
+    nivel-2:
+      dinheiro: 300
+      itens:
+        - GOLD_ORE:16
+      comandos: []
+    nivel-3:
+      dinheiro: 350
+      itens:
+        - DIAMOND_ORE:4
+      comandos: []
+    nivel-4:
+      dinheiro: 400
+      itens:
+        - EMERALD:8
+      comandos: []
+    nivel-5:
+      dinheiro: 500
+      itens:
+        - DIAMOND:8
+      comandos: []
+    nivel-6:
+      dinheiro: 550
+      itens:
+        - GOLD_BLOCK:2
+      comandos: []
+    nivel-7:
+      dinheiro: 600
+      itens:
+        - DIAMOND:6
+      comandos: []
+    nivel-8:
+      dinheiro: 650
+      itens:
+        - EMERALD:12
+      comandos: []
+    nivel-9:
+      dinheiro: 700
+      itens:
+        - IRON_BLOCK:4
+      comandos: []
+    nivel-10:
+      dinheiro: 800
+      itens:
+        - DIAMOND_BLOCK:1
+      comandos:
+        - "broadcast %player% (VIP) resgatou a recompensa do nível 10!"
+    nivel-11:
+      dinheiro: 850
+      itens:
+        - EMERALD:16
+      comandos: []
+    nivel-12:
+      dinheiro: 900
+      itens:
+        - GOLD_BLOCK:4
+      comandos: []
+    nivel-13:
+      dinheiro: 950
+      itens:
+        - DIAMOND:10
+      comandos: []
+    nivel-14:
+      dinheiro: 1000
+      itens:
+        - NETHERITE_SCRAP:1
+      comandos: []
+    nivel-15:
+      dinheiro: 1100
+      itens:
+        - DIAMOND_BLOCK:2
+      comandos: []
+    nivel-16:
+      dinheiro: 1150
+      itens:
+        - EMERALD_BLOCK:2
+      comandos: []
+    nivel-17:
+      dinheiro: 1200
+      itens:
+        - GOLD_INGOT:32
+      comandos: []
+    nivel-18:
+      dinheiro: 1250
+      itens:
+        - DIAMOND:12
+      comandos: []
+    nivel-19:
+      dinheiro: 1300
+      itens:
+        - NETHERITE_SCRAP:2
+      comandos: []
+    nivel-20:
+      dinheiro: 1400
+      itens:
+        - DIAMOND_BLOCK:3
+      comandos: []
+    nivel-21:
+      dinheiro: 1450
+      itens:
+        - EMERALD:20
+      comandos: []
+    nivel-22:
+      dinheiro: 1500
+      itens:
+        - GOLD_BLOCK:8
+      comandos: []
+    nivel-23:
+      dinheiro: 1550
+      itens:
+        - DIAMOND:16
+      comandos: []
+    nivel-24:
+      dinheiro: 1600
+      itens:
+        - NETHERITE_SCRAP:3
+      comandos: []
+    nivel-25:
+      dinheiro: 1800
+      itens:
+        - DIAMOND_BLOCK:2
+        - ENCHANTED_GOLDEN_APPLE:1
+      comandos: []
+    nivel-26:
+      dinheiro: 1850
+      itens:
+        - NETHERITE_INGOT:1
+      comandos: []
+    nivel-27:
+      dinheiro: 1900
+      itens:
+        - EMERALD_BLOCK:4
+      comandos: []
+    nivel-28:
+      dinheiro: 1950
+      itens:
+        - DIAMOND:20
+      comandos: []
+    nivel-29:
+      dinheiro: 2000
+      itens:
+        - GOLD_BLOCK:12
+      comandos: []
+    nivel-30:
+      dinheiro: 2100
+      itens:
+        - DIAMOND_BLOCK:4
+      comandos: []
+    nivel-31:
+      dinheiro: 2150
+      itens:
+        - NETHERITE_SCRAP:4
+      comandos: []
+    nivel-32:
+      dinheiro: 2200
+      itens:
+        - EMERALD:32
+      comandos: []
+    nivel-33:
+      dinheiro: 2250
+      itens:
+        - GOLD_INGOT:64
+      comandos: []
+    nivel-34:
+      dinheiro: 2300
+      itens:
+        - DIAMOND:24
+      comandos: []
+    nivel-35:
+      dinheiro: 2400
+      itens:
+        - DIAMOND_BLOCK:6
+      comandos: []
+    nivel-36:
+      dinheiro: 2450
+      itens:
+        - NETHERITE_INGOT:2
+      comandos: []
+    nivel-37:
+      dinheiro: 2500
+      itens:
+        - EMERALD_BLOCK:8
+      comandos: []
+    nivel-38:
+      dinheiro: 2550
+      itens:
+        - GOLD_BLOCK:16
+      comandos: []
+    nivel-39:
+      dinheiro: 2600
+      itens:
+        - DIAMOND:28
+      comandos: []
+    nivel-40:
+      dinheiro: 2700
+      itens:
+        - DIAMOND_BLOCK:8
+      comandos: []
+    nivel-41:
+      dinheiro: 2750
+      itens:
+        - NETHERITE_SCRAP:6
+      comandos: []
+    nivel-42:
+      dinheiro: 2800
+      itens:
+        - EMERALD:40
+      comandos: []
+    nivel-43:
+      dinheiro: 2850
+      itens:
+        - GOLD_BLOCK:20
+      comandos: []
+    nivel-44:
+      dinheiro: 2900
+      itens:
+        - DIAMOND:32
+      comandos: []
+    nivel-45:
+      dinheiro: 3000
+      itens:
+        - DIAMOND_BLOCK:10
+      comandos: []
+    nivel-46:
+      dinheiro: 3050
+      itens:
+        - NETHERITE_INGOT:3
+      comandos: []
+    nivel-47:
+      dinheiro: 3100
+      itens:
+        - EMERALD_BLOCK:12
+      comandos: []
+    nivel-48:
+      dinheiro: 3150
+      itens:
+        - GOLD_BLOCK:24
+      comandos: []
+    nivel-49:
+      dinheiro: 3200
+      itens:
+        - DIAMOND:36
+      comandos: []
+    nivel-50:
+      dinheiro: 3500
+      itens:
+        - NETHERITE_INGOT:5
+      comandos:
+        - "broadcast %player% (VIP) alcancou o nível 50 do Battle Pass!"
+    nivel-51:
+      dinheiro: 3600
+      itens:
+        - DIAMOND_BLOCK:12
+      comandos: []
+    nivel-52:
+      dinheiro: 3650
+      itens:
+        - EMERALD:48
+      comandos: []
+    nivel-53:
+      dinheiro: 3700
+      itens:
+        - NETHERITE_SCRAP:8
+      comandos: []
+    nivel-54:
+      dinheiro: 3750
+      itens:
+        - GOLD_BLOCK:28
+      comandos: []
+    nivel-55:
+      dinheiro: 3800
+      itens:
+        - DIAMOND:40
+      comandos: []
+    nivel-56:
+      dinheiro: 3900
+      itens:
+        - DIAMOND_BLOCK:14
+      comandos: []
+    nivel-57:
+      dinheiro: 3950
+      itens:
+        - EMERALD_BLOCK:16
+      comandos: []
+    nivel-58:
+      dinheiro: 4000
+      itens:
+        - NETHERITE_INGOT:4
+      comandos: []
+    nivel-59:
+      dinheiro: 4050
+      itens:
+        - GOLD_BLOCK:32
+      comandos: []
+    nivel-60:
+      dinheiro: 4200
+      itens:
+        - NETHERITE_INGOT:6
+      comandos: []
+    nivel-61:
+      dinheiro: 4300
+      itens:
+        - DIAMOND_BLOCK:16
+      comandos: []
+    nivel-62:
+      dinheiro: 4350
+      itens:
+        - EMERALD:64
+      comandos: []
+    nivel-63:
+      dinheiro: 4400
+      itens:
+        - NETHERITE_SCRAP:10
+      comandos: []
+    nivel-64:
+      dinheiro: 4450
+      itens:
+        - GOLD_BLOCK:36
+      comandos: []
+    nivel-65:
+      dinheiro: 4500
+      itens:
+        - DIAMOND:48
+      comandos: []
+    nivel-66:
+      dinheiro: 4600
+      itens:
+        - DIAMOND_BLOCK:18
+      comandos: []
+    nivel-67:
+      dinheiro: 4650
+      itens:
+        - EMERALD_BLOCK:20
+      comandos: []
+    nivel-68:
+      dinheiro: 4700
+      itens:
+        - NETHERITE_INGOT:7
+      comandos: []
+    nivel-69:
+      dinheiro: 4750
+      itens:
+        - GOLD_BLOCK:40
+      comandos: []
+    nivel-70:
+      dinheiro: 4800
+      itens:
+        - NETHERITE_INGOT:8
+      comandos: []
+    nivel-71:
+      dinheiro: 4900
+      itens:
+        - DIAMOND_BLOCK:20
+      comandos: []
+    nivel-72:
+      dinheiro: 4950
+      itens:
+        - EMERALD_BLOCK:24
+      comandos: []
+    nivel-73:
+      dinheiro: 5000
+      itens:
+        - NETHERITE_SCRAP:14
+      comandos: []
+    nivel-74:
+      dinheiro: 5050
+      itens:
+        - GOLD_BLOCK:44
+      comandos: []
+    nivel-75:
+      dinheiro: 5200
+      itens:
+        - NETHERITE_INGOT:10
+      comandos: []
+    nivel-76:
+      dinheiro: 5300
+      itens:
+        - DIAMOND_BLOCK:24
+      comandos: []
+    nivel-77:
+      dinheiro: 5350
+      itens:
+        - EMERALD:64
+      comandos: []
+    nivel-78:
+      dinheiro: 5400
+      itens:
+        - NETHERITE_SCRAP:16
+      comandos: []
+    nivel-79:
+      dinheiro: 5450
+      itens:
+        - GOLD_BLOCK:48
+      comandos: []
+    nivel-80:
+      dinheiro: 5500
+      itens:
+        - NETHERITE_INGOT:12
+      comandos: []
+    nivel-81:
+      dinheiro: 5600
+      itens:
+        - DIAMOND_BLOCK:28
+      comandos: []
+    nivel-82:
+      dinheiro: 5700
+      itens:
+        - EMERALD_BLOCK:28
+      comandos: []
+    nivel-83:
+      dinheiro: 5800
+      itens:
+        - NETHERITE_SCRAP:18
+      comandos: []
+    nivel-84:
+      dinheiro: 5850
+      itens:
+        - GOLD_BLOCK:52
+      comandos: []
+    nivel-85:
+      dinheiro: 5900
+      itens:
+        - DIAMOND:64
+      comandos: []
+    nivel-86:
+      dinheiro: 6000
+      itens:
+        - DIAMOND_BLOCK:32
+      comandos: []
+    nivel-87:
+      dinheiro: 6100
+      itens:
+        - EMERALD_BLOCK:32
+      comandos: []
+    nivel-88:
+      dinheiro: 6200
+      itens:
+        - NETHERITE_INGOT:14
+      comandos: []
+    nivel-89:
+      dinheiro: 6300
+      itens:
+        - GOLD_BLOCK:56
+      comandos: []
+    nivel-90:
+      dinheiro: 6500
+      itens:
+        - NETHERITE_INGOT:16
+      comandos: []
+    nivel-91:
+      dinheiro: 6600
+      itens:
+        - DIAMOND_BLOCK:36
+      comandos: []
+    nivel-92:
+      dinheiro: 6700
+      itens:
+        - EMERALD_BLOCK:36
+      comandos: []
+    nivel-93:
+      dinheiro: 6800
+      itens:
+        - NETHERITE_SCRAP:24
+      comandos: []
+    nivel-94:
+      dinheiro: 6900
+      itens:
+        - GOLD_BLOCK:64
+      comandos: []
+    nivel-95:
+      dinheiro: 7000
+      itens:
+        - NETHERITE_INGOT:18
+      comandos: []
+    nivel-96:
+      dinheiro: 7200
+      itens:
+        - DIAMOND_BLOCK:40
+      comandos: []
+    nivel-97:
+      dinheiro: 7400
+      itens:
+        - EMERALD_BLOCK:40
+      comandos: []
+    nivel-98:
+      dinheiro: 7600
+      itens:
+        - NETHERITE_BLOCK:1
+      comandos: []
+    nivel-99:
+      dinheiro: 7800
+      itens:
+        - NETHERITE_INGOT:20
+      comandos: []
+    nivel-100:
+      dinheiro: 20000
+      itens:
+        - NETHERITE_BLOCK:2
+        - BEACON:1
+        - ELYTRA:1
+      comandos:
+        - "broadcast %player% (VIP) completou o Battle Pass!"
