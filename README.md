@@ -5,6 +5,7 @@
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Paper](https://img.shields.io/badge/Paper-1.21.1-blue)
 ![Version](https://img.shields.io/badge/Version-1.0.0-green)
+[![Download](https://img.shields.io/github/downloads/ViniciusCarvalho-V-B/RootsSkyBattlePass/total?color=green&label=Downloads)](https://github.com/ViniciusCarvalho-V-B/RootsSkyBattlePass/releases)
 
 ## 📖 Sobre o Plugin
 O **RootsSky Battle Pass** é um sistema completo de progressão criado para servidores de Skyblock. Ele permite que os jogadores completem missões diárias, semanais e mensais para ganhar recompensas exclusivas, dinheiro e XP.
