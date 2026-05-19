@@ -51,8 +51,6 @@ O plugin foi desenvolvido pensando em uma experiência limpa e agradavel, sem ne
 Ou acesse a página de [Releases](https://github.com/ViniciusCarvalho-V-B/RootsSkyBattlePass/releases) para ver todas as versões disponíveis.
 
 ## 📥 Instalação
-
-## 📥 Instalação
 1. Baixe o arquivo `.jar` mais recente na seção **Releases**
 2. Coloque na pasta `plugins/` do seu servidor
 3. Reinicie o servidor
