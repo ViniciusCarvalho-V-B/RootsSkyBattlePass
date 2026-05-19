@@ -1,6 +1,6 @@
 # 🏆 RootsSky Battle Pass
 
-> Sistema profissional de Passe de Batalha e Missões para servidores Minecraft Skyblock.
+> Sistema de Passe de Batalha e Missões para servidores Minecraft Skyblock.
 
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Paper](https://img.shields.io/badge/Paper-1.21.1-blue)
@@ -9,7 +9,7 @@
 ## 📖 Sobre o Plugin
 O **RootsSky Battle Pass** é um sistema completo de progressão criado para servidores de Skyblock. Ele permite que os jogadores completem missões diárias, semanais e mensais para ganhar recompensas exclusivas, dinheiro e XP.
 
-O plugin foi desenvolvido pensando em uma experiência limpa e profissional, sem necessidade de pacotes de textura, funcionando perfeitamente com o visual vanilla do Minecraft.
+O plugin foi desenvolvido pensando em uma experiência limpa e agradavel, sem necessidade de pacotes de textura, funcionando perfeitamente com o visual vanilla do Minecraft.
 
 ## ✨ Funcionalidades Principais
 
