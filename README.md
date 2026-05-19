@@ -43,6 +43,14 @@ O plugin foi desenvolvido pensando em uma experiência limpa e agradavel, sem ne
 - `/passeadmin givevip <player>` - Concede status VIP ao jogador
 - `/passeadmin setlevel <player> <nivel>` - Define o nível manualmente
 
+## 📥 Download
+
+**Baixe a versão mais recente:** [RootsSkyBattlePass v1.0.0](https://github.com/ViniciusCarvalho-V-B/RootsSkyBattlePass/releases/download/v1.0.0/RootsSkyBattlePass-1.0.0.jar)
+
+Ou acesse a página de [Releases](https://github.com/ViniciusCarvalho-V-B/RootsSkyBattlePass/releases) para ver todas as versões disponíveis.
+
+## 📥 Instalação
+
 ## 📥 Instalação
 1. Baixe o arquivo `.jar` mais recente na seção **Releases**
 2. Coloque na pasta `plugins/` do seu servidor
