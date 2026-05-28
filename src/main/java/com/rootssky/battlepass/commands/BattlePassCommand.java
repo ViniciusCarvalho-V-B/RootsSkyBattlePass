@@ -80,8 +80,20 @@ public class BattlePassCommand implements CommandExecutor, TabCompleter {
         }
 
         switch (args[0].toLowerCase()) {
-            case "reload" -> executarReload(sender);
-            case "reset" -> executarReset(sender, args);
+            case "reload" -> {
+                plugin.getConfigManager().reload();
+                plugin.getMissionManager().loadMissions();
+                plugin.getRewardManager().setupEconomy();
+                String formula = plugin.getConfigManager().getXpFormula();
+                for (PlayerProfile profile : plugin.playerCache.values()) {
+                    profile.setXpFormula(formula);
+                }
+                sender.sendMessage(Utils.applyPrefix(plugin.getConfigManager().getMessage("reloaded")));
+                Utils.log("<green>Configurações recarregadas por " + sender.getName());
+            }
+            case "reset" -> {
+                sender.sendMessage(Utils.applyPrefix("<yellow>Use /bpreset <jogador> para resetar progresso"));
+            }
             case "givevip" -> executarGiveVip(sender, args);
             case "setlevel" -> executarSetLevel(sender, args);
             case "addxp" -> executarAddXp(sender, args);
@@ -89,82 +101,6 @@ public class BattlePassCommand implements CommandExecutor, TabCompleter {
         }
 
         return true;
-    }
-
-    private void executarReload(CommandSender sender) {
-        plugin.getConfigManager().reload();
-        plugin.getMissionManager().loadMissions();
-        plugin.getRewardManager().setupEconomy();
-
-        String formula = plugin.getConfigManager().getXpFormula();
-        for (PlayerProfile profile : plugin.playerCache.values()) {
-            profile.setXpFormula(formula);
-        }
-
-        sender.sendMessage(Utils.applyPrefix(plugin.getConfigManager().getMessage("reloaded")));
-        Utils.log("<green>Configurações recarregadas por " + sender.getName());
-    }
-
-    private void executarReset(CommandSender sender, String[] args) {
-        if (args.length < 2) {
-            sender.sendMessage(Utils.applyPrefix("<red>Uso: /passeadmin reset <jogador>"));
-            return;
-        }
-
-        Player alvo = Bukkit.getPlayer(args[1]);
-        if (alvo == null) {
-            sender.sendMessage(Utils.applyPrefix("<red>Jogador não encontrado."));
-            return;
-        }
-
-        PlayerProfile profile = plugin.playerCache.get(alvo.getUniqueId());
-        if (profile == null) {
-            sender.sendMessage(Utils.applyPrefix("<red>Dados do jogador não estão carregados."));
-            return;
-        }
-
-        // 1. Zerar dados do perfil em memória
-        profile.setLevel(1);
-        profile.setXp(0);
-        profile.setPremium(false);
-        profile.getClaimedRewards().clear();
-        profile.getCompletedMissions().clear();
-        plugin.getMissionManager().removePlayer(alvo.getUniqueId());
-        plugin.getRewardManager().limparCooldown(alvo.getUniqueId());
-
-        // 2. Salvar no banco de dados (bloqueante)
-        try {
-            plugin.getDatabaseManager().savePlayer(profile).join();
-        } catch (Exception e) {
-            sender.sendMessage(Utils.applyPrefix("<red>Erro ao salvar no banco de dados."));
-            return;
-        }
-
-        // 3. Remover do cache (força reload limpo)
-        plugin.playerCache.remove(alvo.getUniqueId());
-
-        // 4. Recarregar perfil "zerado" do banco
-        PlayerProfile freshProfile;
-        try {
-            freshProfile = plugin.getDatabaseManager().loadPlayer(alvo.getUniqueId()).join();
-        } catch (Exception e) {
-            sender.sendMessage(Utils.applyPrefix("<red>Erro ao recarregar perfil do banco."));
-            return;
-        }
-
-        // 5. Colocar perfil limpo no cache
-        plugin.playerCache.put(alvo.getUniqueId(), freshProfile);
-
-        sender.sendMessage(Utils.applyPrefix("<green>Passe de " + alvo.getName() + " completamente resetado!"));
-        alvo.sendMessage(Utils.color("<green>Seu passe foi completamente resetado!"));
-        Utils.log("<yellow>Passe de " + alvo.getName() + " resetado por " + sender.getName());
-
-        // 6. Reabrir a GUI com o perfil zerado
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (alvo.isOnline()) {
-                BattlePassGUI.abrir(plugin, alvo, 0);
-            }
-        }, 3L);
     }
 
     private void executarGiveVip(CommandSender sender, String[] args) {
@@ -269,11 +205,10 @@ public class BattlePassCommand implements CommandExecutor, TabCompleter {
 
     private void enviarAjudaAdmin(CommandSender sender) {
         sender.sendMessage(Utils.applyPrefix("<gold>⚙ Comandos Administrativos:"));
-        sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin reload <dark_gray>- Recarregar configurações"));
-        sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin reset <jogador> <dark_gray>- Resetar progresso"));
-        sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin givevip <jogador> <dark_gray>- Dar VIP (LuckPerms)"));
+        sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin givevip <jogador> <dark_gray>- Dar VIP"));
         sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin setlevel <jogador> <nível> <dark_gray>- Definir nível"));
         sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin addxp <jogador> <xp> <dark_gray>- Adicionar XP"));
+        sender.sendMessage(Utils.applyPrefix("<gray>/bpreset <jogador> <dark_gray>- Resetar progresso do jogador"));
     }
 
     @Override
@@ -286,12 +221,10 @@ public class BattlePassCommand implements CommandExecutor, TabCompleter {
             }
 
             if (args.length == 1) {
-                completions.add("reload");
-                completions.add("reset");
                 completions.add("givevip");
                 completions.add("setlevel");
                 completions.add("addxp");
-            } else if (args.length == 2 && !args[0].equalsIgnoreCase("reload")) {
+            } else if (args.length == 2) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     completions.add(p.getName());
                 }

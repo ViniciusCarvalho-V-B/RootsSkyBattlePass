@@ -28,7 +28,8 @@ public class PlayerProfile {
         this.level = 1;
         this.xp = 0;
         this.completedMissions.clear();
-        // Note: Keep config-related data (missions, rewards) intact
+        this.claimedRewards.clear(); // Clear claimed rewards to allow resgating again
+        // Note: Keep config-related data (missions, rewards configuration) intact
         // This method only resets player-specific progress data
     }
 

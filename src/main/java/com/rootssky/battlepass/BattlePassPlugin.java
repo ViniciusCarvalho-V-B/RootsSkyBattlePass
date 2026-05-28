@@ -87,11 +87,11 @@ public class BattlePassPlugin extends JavaPlugin {
         }
 
         for (Player online : Bukkit.getOnlinePlayers()) {
-            rewardManager.limparCooldown(online.getUniqueId());
-            missionManager.removePlayer(online.getUniqueId());
+            if (rewardManager != null) rewardManager.limparCooldown(online.getUniqueId());
+            if (missionManager != null) missionManager.removePlayer(online.getUniqueId());
         }
 
-        missionManager.stopResetScheduler();
+        if (missionManager != null) missionManager.stopResetScheduler();
 
         if (databaseManager != null) {
             databaseManager.close();
