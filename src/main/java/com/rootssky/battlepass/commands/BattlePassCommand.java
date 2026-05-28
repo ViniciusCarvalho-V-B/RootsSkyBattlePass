@@ -137,7 +137,6 @@ public class BattlePassCommand implements CommandExecutor, TabCompleter {
             plugin.getDatabaseManager().savePlayer(profile).join();
         } catch (Exception e) {
             sender.sendMessage(Utils.applyPrefix("<red>Erro ao salvar no banco de dados."));
-            Utils.log("<red>Erro ao salvar reset: " + e.getMessage());
             return;
         }
 
@@ -150,7 +149,6 @@ public class BattlePassCommand implements CommandExecutor, TabCompleter {
             freshProfile = plugin.getDatabaseManager().loadPlayer(alvo.getUniqueId()).join();
         } catch (Exception e) {
             sender.sendMessage(Utils.applyPrefix("<red>Erro ao recarregar perfil do banco."));
-            Utils.log("<red>Erro ao recarregar perfil: " + e.getMessage());
             return;
         }
 

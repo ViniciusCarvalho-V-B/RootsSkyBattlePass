@@ -24,6 +24,14 @@ public class PlayerProfile {
         this.xpFormula = "{level} * 150";
     }
 
+    public void resetProgress() {
+        this.level = 1;
+        this.xp = 0;
+        this.completedMissions.clear();
+        // Note: Keep config-related data (missions, rewards) intact
+        // This method only resets player-specific progress data
+    }
+
     public boolean addXP(int amount) {
         this.xp += amount;
         boolean leveledUp = false;
@@ -40,7 +48,7 @@ public class PlayerProfile {
     public int calculateNextLevelXP() {
         String formula = this.xpFormula.replace("{level}", String.valueOf(level));
         try {
-            String[] parts = formula.split("\\*");
+            String[] parts = formula.split("\\\\*");
             if (parts.length == 2) {
                 double a = Double.parseDouble(parts[0].trim());
                 double b = Double.parseDouble(parts[1].trim());

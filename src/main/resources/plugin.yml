@@ -10,6 +10,9 @@ commands:
     description: "Abrir menu do Passe de Batalha"
     aliases: [bp, passe]
     permission: rootssky.passe.use
+  bpreset:
+    description: "Resetar o progresso do jogador"
+    permission: rootssky.passe.reset
   passeadmin:
     description: "Comandos administrativos do Passe de Batalha"
     aliases: [passeadm, bpadmin]
@@ -25,3 +28,6 @@ permissions:
   rootssky.passe.vip:
     description: "Acesso ao Battle Pass VIP (1.5x XP + recompensas exclusivas)"
     default: false
+  rootssky.passe.reset:
+    description: "Permite resetar o progresso do jogador"
+    default: op

@@ -63,6 +63,12 @@ public class BattlePassPlugin extends JavaPlugin {
         getCommand("passeadmin").setExecutor(commandHandler);
         getCommand("passeadmin").setTabCompleter(commandHandler);
 
+        // Register the new reset command
+        com.rootssky.battlepass.commands.BattlePassResetCommand resetCommand = new com.rootssky.battlepass.commands.BattlePassResetCommand(this);
+        if (getCommand("bpreset") != null) {
+            getCommand("bpreset").setExecutor(resetCommand);
+        }
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new com.rootssky.battlepass.placeholders.RootsSkyPlaceholderExpansion(this).register();
             Utils.log("<green>PlaceholderAPI integrado!");
