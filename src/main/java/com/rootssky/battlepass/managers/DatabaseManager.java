@@ -4,6 +4,8 @@ import com.rootssky.battlepass.BattlePassPlugin;
 import com.rootssky.battlepass.models.PlayerProfile;
 import com.rootssky.battlepass.utils.Utils;
 
+import com.rootssky.battlepass.models.MissionType;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,6 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -27,15 +31,19 @@ public class DatabaseManager {
     private final Object connectionLock = new Object();
 
     private static final String SQL_UPSERT = """
-            INSERT INTO players (uuid, level, xp, premium, last_login, completed_missions, claimed_rewards)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO players (uuid, level, xp, premium, last_login, completed_missions, claimed_rewards, mission_progress, last_daily_reset, last_weekly_reset, last_monthly_reset)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(uuid) DO UPDATE SET
                 level = excluded.level,
                 xp = excluded.xp,
                 premium = excluded.premium,
                 last_login = excluded.last_login,
                 completed_missions = excluded.completed_missions,
-                claimed_rewards = excluded.claimed_rewards
+                claimed_rewards = excluded.claimed_rewards,
+                mission_progress = excluded.mission_progress,
+                last_daily_reset = excluded.last_daily_reset,
+                last_weekly_reset = excluded.last_weekly_reset,
+                last_monthly_reset = excluded.last_monthly_reset
             """;
 
     public DatabaseManager(BattlePassPlugin plugin, File dataFolder) {
@@ -77,6 +85,33 @@ public class DatabaseManager {
                         stmt.execute("ALTER TABLE players ADD COLUMN claimed_rewards TEXT NOT NULL DEFAULT ''");
                     } catch (SQLException ignored) {
                     }
+
+                    try {
+                        stmt.execute("ALTER TABLE players ADD COLUMN mission_progress TEXT NOT NULL DEFAULT ''");
+                    } catch (SQLException ignored) {
+                    }
+
+                    try {
+                        stmt.execute("ALTER TABLE players ADD COLUMN last_daily_reset TEXT NOT NULL DEFAULT ''");
+                    } catch (SQLException ignored) {
+                    }
+
+                    try {
+                        stmt.execute("ALTER TABLE players ADD COLUMN last_weekly_reset TEXT NOT NULL DEFAULT ''");
+                    } catch (SQLException ignored) {
+                    }
+
+                    try {
+                        stmt.execute("ALTER TABLE players ADD COLUMN last_monthly_reset TEXT NOT NULL DEFAULT ''");
+                    } catch (SQLException ignored) {
+                    }
+
+                    stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS mission_resets (
+                            period TEXT PRIMARY KEY,
+                            reset_time TEXT NOT NULL
+                        )
+                        """);
                 }
 
                 synchronized (connectionLock) {
@@ -133,6 +168,35 @@ public class DatabaseManager {
                                 }
                             }
 
+                            String progressStr = rs.getString("mission_progress");
+                            if (progressStr != null && !progressStr.isEmpty()) {
+                                for (String entry : progressStr.split(",")) {
+                                    if (entry.isBlank()) continue;
+                                    String[] parts = entry.split(":");
+                                    if (parts.length == 2) {
+                                        try {
+                                            MissionType type = MissionType.valueOf(parts[0].trim());
+                                            int value = Integer.parseInt(parts[1].trim());
+                                            profile.getMissionProgress().put(type, value);
+                                        } catch (IllegalArgumentException ignored) {
+                                        }
+                                    }
+                                }
+                            }
+
+                            String dailyReset = rs.getString("last_daily_reset");
+                            if (dailyReset != null && !dailyReset.isEmpty()) {
+                                try { profile.setLastDailyReset(Long.parseLong(dailyReset)); } catch (NumberFormatException ignored) {}
+                            }
+                            String weeklyReset = rs.getString("last_weekly_reset");
+                            if (weeklyReset != null && !weeklyReset.isEmpty()) {
+                                try { profile.setLastWeeklyReset(Long.parseLong(weeklyReset)); } catch (NumberFormatException ignored) {}
+                            }
+                            String monthlyReset = rs.getString("last_monthly_reset");
+                            if (monthlyReset != null && !monthlyReset.isEmpty()) {
+                                try { profile.setLastMonthlyReset(Long.parseLong(monthlyReset)); } catch (NumberFormatException ignored) {}
+                            }
+
                             String formula = plugin.getConfigManager().getXpFormula();
                             profile.setXpFormula(formula);
 
@@ -162,12 +226,28 @@ public class DatabaseManager {
                     ps.setString(5, java.time.Instant.now().toString());
                     ps.setString(6, String.join(",", profile.getCompletedMissions()));
                     ps.setString(7, String.join(",", profile.getClaimedRewards()));
+                    ps.setString(8, serializeMissionProgress(profile.getMissionProgress()));
+                    ps.setString(9, profile.getLastDailyReset() > 0 ? String.valueOf(profile.getLastDailyReset()) : "");
+                    ps.setString(10, profile.getLastWeeklyReset() > 0 ? String.valueOf(profile.getLastWeeklyReset()) : "");
+                    ps.setString(11, profile.getLastMonthlyReset() > 0 ? String.valueOf(profile.getLastMonthlyReset()) : "");
                     ps.executeUpdate();
                 }
+                profile.setModified(false);
             } catch (SQLException e) {
                 throw new RuntimeException("Falha ao salvar jogador (sync): " + profile.getUuid(), e);
             }
         }
+    }
+
+    private String serializeMissionProgress(Map<MissionType, Integer> progress) {
+        if (progress == null || progress.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<MissionType, Integer> entry : progress.entrySet()) {
+            if (entry.getValue() == null || entry.getValue() == 0) continue;
+            if (sb.length() > 0) sb.append(",");
+            sb.append(entry.getKey().name()).append(":").append(entry.getValue());
+        }
+        return sb.toString();
     }
 
     public CompletableFuture<Void> savePlayer(PlayerProfile profile) {
@@ -190,12 +270,20 @@ public class DatabaseManager {
                                 ps.setString(5, java.time.Instant.now().toString());
                                 ps.setString(6, String.join(",", profile.getCompletedMissions()));
                                 ps.setString(7, String.join(",", profile.getClaimedRewards()));
+                                ps.setString(8, serializeMissionProgress(profile.getMissionProgress()));
+                                ps.setString(9, profile.getLastDailyReset() > 0 ? String.valueOf(profile.getLastDailyReset()) : "");
+                                ps.setString(10, profile.getLastWeeklyReset() > 0 ? String.valueOf(profile.getLastWeeklyReset()) : "");
+                                ps.setString(11, profile.getLastMonthlyReset() > 0 ? String.valueOf(profile.getLastMonthlyReset()) : "");
                                 ps.addBatch();
                             } catch (SQLException e) {
                                 Utils.log("<red>Erro ao adicionar profile ao batch: " + profile.getUuid() + " - " + e.getMessage());
                             }
                         }
                         ps.executeBatch();
+                    }
+
+                    for (PlayerProfile profile : profiles) {
+                        profile.setModified(false);
                     }
 
                     getConnection().setAutoCommit(true);
@@ -219,6 +307,37 @@ public class DatabaseManager {
                 }
             }
         }, executor);
+    }
+
+    public Map<String, Long> loadResetTimestampsSync() {
+        synchronized (connectionLock) {
+            Map<String, Long> result = new HashMap<>();
+            try (Statement stmt = getConnection().createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM mission_resets")) {
+                while (rs.next()) {
+                    try {
+                        result.put(rs.getString("period"), Long.parseLong(rs.getString("reset_time")));
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+            } catch (SQLException e) {
+                Utils.log("<red>Falha ao carregar timestamps: " + e.getMessage());
+            }
+            return result;
+        }
+    }
+
+    public void saveResetTimestampSync(String period, long timestamp) {
+        synchronized (connectionLock) {
+            String sql = "INSERT INTO mission_resets (period, reset_time) VALUES (?, ?) ON CONFLICT(period) DO UPDATE SET reset_time = excluded.reset_time";
+            try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+                ps.setString(1, period);
+                ps.setString(2, String.valueOf(timestamp));
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                Utils.log("<red>Falha ao salvar timestamp: " + e.getMessage());
+            }
+        }
     }
 
     public void close() {

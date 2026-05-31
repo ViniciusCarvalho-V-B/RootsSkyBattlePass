@@ -44,10 +44,9 @@ public class BattlePassResetCommand implements CommandExecutor {
         // Close player's inventory to prevent ghost items
         target.closeInventory();
 
-        // Reset player progress using the safe method
         profile.resetProgress();
+        plugin.getMissionManager().removePlayer(target.getUniqueId());
 
-        // Save to database asynchronously
         plugin.getDatabaseManager().savePlayer(profile).thenRun(() -> {
             sender.sendMessage(Utils.applyPrefix("<green>Progresso do jogador " + target.getName() + " resetado com sucesso!"));
             target.sendMessage(Utils.applyPrefix("<green>Seu progresso no Battle Pass foi resetado!"));

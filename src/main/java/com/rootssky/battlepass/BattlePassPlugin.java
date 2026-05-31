@@ -9,6 +9,7 @@ import com.rootssky.battlepass.managers.ConfigManager;
 import com.rootssky.battlepass.managers.DatabaseManager;
 import com.rootssky.battlepass.managers.MissionManager;
 import com.rootssky.battlepass.managers.RewardManager;
+import com.rootssky.battlepass.models.MissionPeriod;
 import com.rootssky.battlepass.models.PlayerProfile;
 import com.rootssky.battlepass.utils.Utils;
 import org.bukkit.Bukkit;
@@ -18,9 +19,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,6 +34,7 @@ public class BattlePassPlugin extends JavaPlugin {
     private ConfigManager configManager;
     private MissionManager missionManager;
     private RewardManager rewardManager;
+    private BukkitTask autoSaveTask;
 
     public ConcurrentHashMap<UUID, PlayerProfile> playerCache = new ConcurrentHashMap<>();
 
@@ -49,6 +53,25 @@ public class BattlePassPlugin extends JavaPlugin {
         missionManager = new MissionManager(this);
         missionManager.loadMissions();
         missionManager.startResetScheduler();
+
+        autoSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+            int saved = 0;
+            for (PlayerProfile profile : playerCache.values()) {
+                if (profile.isModified()) {
+                    try {
+                        missionManager.saveProgressToProfile(profile);
+                        databaseManager.savePlayerSync(profile);
+                        saved++;
+                    } catch (Exception e) {
+                        getLogger().warning("Auto-save falhou para " + profile.getUuid() + ": " + e.getMessage());
+                    }
+                }
+            }
+            if (saved > 0) {
+                getLogger().info("Auto-save: " + saved + " perfis salvos.");
+            }
+        }, 6000L, 6000L); // 5 minutos (100 ticks = 5s, 6000 ticks = 5min)
+        getLogger().info("Auto-save agendado a cada 5 minutos.");
 
         rewardManager = new RewardManager(this);
         rewardManager.setupEconomy();
@@ -79,6 +102,21 @@ public class BattlePassPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        getLogger().info("Salvando dados antes do desligamento...");
+
+        if (autoSaveTask != null) {
+            autoSaveTask.cancel();
+            autoSaveTask = null;
+        }
+
+        if (missionManager != null && databaseManager != null) {
+            missionManager.saveAllProgressToProfiles();
+
+            for (Map.Entry<MissionPeriod, Long> entry : missionManager.getLastReset().entrySet()) {
+                databaseManager.saveResetTimestampSync(entry.getKey().name(), entry.getValue());
+            }
+        }
+
         List<PlayerProfile> perfis = new ArrayList<>(playerCache.values());
         playerCache.clear();
 

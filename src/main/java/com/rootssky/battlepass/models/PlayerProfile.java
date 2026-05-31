@@ -1,6 +1,8 @@
 package com.rootssky.battlepass.models;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,6 +15,11 @@ public class PlayerProfile {
     private final Set<String> completedMissions;
     private final Set<String> claimedRewards;
     private String xpFormula;
+    private boolean modified;
+    private final Map<MissionType, Integer> missionProgress;
+    private long lastDailyReset;
+    private long lastWeeklyReset;
+    private long lastMonthlyReset;
 
     public PlayerProfile(UUID uuid) {
         this.uuid = uuid;
@@ -22,15 +29,23 @@ public class PlayerProfile {
         this.completedMissions = new HashSet<>();
         this.claimedRewards = new HashSet<>();
         this.xpFormula = "{level} * 150";
+        this.modified = false;
+        this.missionProgress = new HashMap<>();
+        this.lastDailyReset = 0;
+        this.lastWeeklyReset = 0;
+        this.lastMonthlyReset = 0;
     }
 
     public void resetProgress() {
         this.level = 1;
         this.xp = 0;
         this.completedMissions.clear();
-        this.claimedRewards.clear(); // Clear claimed rewards to allow resgating again
-        // Note: Keep config-related data (missions, rewards configuration) intact
-        // This method only resets player-specific progress data
+        this.claimedRewards.clear();
+        this.missionProgress.clear();
+        this.lastDailyReset = 0;
+        this.lastWeeklyReset = 0;
+        this.lastMonthlyReset = 0;
+        this.modified = true;
     }
 
     public boolean addXP(int amount) {
@@ -99,5 +114,41 @@ public class PlayerProfile {
 
     public void setXpFormula(String formula) {
         this.xpFormula = formula;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+
+    public Map<MissionType, Integer> getMissionProgress() {
+        return missionProgress;
+    }
+
+    public long getLastDailyReset() {
+        return lastDailyReset;
+    }
+
+    public void setLastDailyReset(long lastDailyReset) {
+        this.lastDailyReset = lastDailyReset;
+    }
+
+    public long getLastWeeklyReset() {
+        return lastWeeklyReset;
+    }
+
+    public void setLastWeeklyReset(long lastWeeklyReset) {
+        this.lastWeeklyReset = lastWeeklyReset;
+    }
+
+    public long getLastMonthlyReset() {
+        return lastMonthlyReset;
+    }
+
+    public void setLastMonthlyReset(long lastMonthlyReset) {
+        this.lastMonthlyReset = lastMonthlyReset;
     }
 }

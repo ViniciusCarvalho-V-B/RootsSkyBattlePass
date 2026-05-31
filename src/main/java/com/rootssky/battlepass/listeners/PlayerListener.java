@@ -26,6 +26,7 @@ public class PlayerListener implements Listener {
 
         db.loadPlayer(player.getUniqueId()).thenAccept(profile -> {
             plugin.playerCache.put(player.getUniqueId(), profile);
+            plugin.getMissionManager().loadProgressFromProfile(profile);
 
             plugin.getServer().getRegionScheduler().execute(plugin, player.getLocation(), () -> {
                 if (player.isOnline()) {
@@ -47,6 +48,7 @@ public class PlayerListener implements Listener {
         PlayerProfile profile = plugin.playerCache.remove(player.getUniqueId());
 
         if (profile != null) {
+            plugin.getMissionManager().saveProgressToProfile(profile);
             plugin.getDatabaseManager().savePlayer(profile).exceptionally(ex -> {
                 Utils.log("<red>Falha ao salvar dados de " + player.getName() + ": " + ex.getMessage());
                 return null;

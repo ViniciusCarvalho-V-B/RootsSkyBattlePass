@@ -56,6 +56,15 @@ public class MissionManager {
             lastReset.putIfAbsent(period, now);
         }
 
+        Map<String, Long> savedTimestamps = plugin.getDatabaseManager().loadResetTimestampsSync();
+        for (Map.Entry<String, Long> entry : savedTimestamps.entrySet()) {
+            try {
+                MissionPeriod period = MissionPeriod.valueOf(entry.getKey());
+                lastReset.put(period, entry.getValue());
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
         int daily = getMissionCountByPeriod(MissionPeriod.DAILY);
         int weekly = getMissionCountByPeriod(MissionPeriod.WEEKLY);
         int monthly = getMissionCountByPeriod(MissionPeriod.MONTHLY);
@@ -135,6 +144,49 @@ public class MissionManager {
         return sb.toString();
     }
 
+    public void loadProgressFromProfile(PlayerProfile profile) {
+        UUID uuid = profile.getUuid();
+        Map<MissionType, AtomicInteger> progress = playerProgress.computeIfAbsent(uuid, k -> new EnumMap<>(MissionType.class));
+        for (Map.Entry<MissionType, Integer> entry : profile.getMissionProgress().entrySet()) {
+            if (entry.getValue() != null && entry.getValue() > 0) {
+                progress.put(entry.getKey(), new AtomicInteger(entry.getValue()));
+            }
+        }
+
+        if (profile.getLastDailyReset() > 0) {
+            lastReset.put(MissionPeriod.DAILY, profile.getLastDailyReset());
+        }
+        if (profile.getLastWeeklyReset() > 0) {
+            lastReset.put(MissionPeriod.WEEKLY, profile.getLastWeeklyReset());
+        }
+        if (profile.getLastMonthlyReset() > 0) {
+            lastReset.put(MissionPeriod.MONTHLY, profile.getLastMonthlyReset());
+        }
+    }
+
+    public void saveProgressToProfile(PlayerProfile profile) {
+        UUID uuid = profile.getUuid();
+        Map<MissionType, AtomicInteger> progress = playerProgress.get(uuid);
+        if (progress != null) {
+            profile.getMissionProgress().clear();
+            for (Map.Entry<MissionType, AtomicInteger> entry : progress.entrySet()) {
+                int val = entry.getValue().get();
+                if (val > 0) {
+                    profile.getMissionProgress().put(entry.getKey(), val);
+                }
+            }
+        }
+        profile.setLastDailyReset(lastReset.getOrDefault(MissionPeriod.DAILY, 0L));
+        profile.setLastWeeklyReset(lastReset.getOrDefault(MissionPeriod.WEEKLY, 0L));
+        profile.setLastMonthlyReset(lastReset.getOrDefault(MissionPeriod.MONTHLY, 0L));
+    }
+
+    public void saveAllProgressToProfiles() {
+        for (Map.Entry<UUID, PlayerProfile> entry : plugin.playerCache.entrySet()) {
+            saveProgressToProfile(entry.getValue());
+        }
+    }
+
     public void startResetScheduler() {
         if (schedulerTaskId != -1) return;
 
@@ -174,6 +226,7 @@ public class MissionManager {
             if (shouldReset) {
                 resetPeriod(period);
                 lastReset.put(period, now);
+                plugin.getDatabaseManager().saveResetTimestampSync(period.name(), now);
                 Utils.log("<green>Missões " + period.getDisplayName() + "s resetadas automaticamente!");
             }
         }
@@ -201,6 +254,7 @@ public class MissionManager {
                 for (String id : idsToClear) {
                     profile.getCompletedMissions().remove(id);
                 }
+                profile.setModified(true);
             }
         }
     }
@@ -245,6 +299,8 @@ public class MissionManager {
                     notificarMissaoCompleta(player, mission);
                 }
             }
+
+            profile.setModified(true);
         }
     }
 
@@ -266,6 +322,7 @@ public class MissionManager {
         int xpFinal = (int) Math.round(xpBase * multiplicador);
 
         profile.getClaimedRewards().add(claimKey);
+        profile.setModified(true);
         boolean subiu = profile.addXP(xpFinal);
 
         String xpDisplay;
@@ -365,6 +422,10 @@ public class MissionManager {
                 .filter(m -> m.period() == period)
                 .filter(m -> profile.getCompletedMissions().contains(m.id()))
                 .count();
+    }
+
+    public Map<MissionPeriod, Long> getLastReset() {
+        return lastReset;
     }
 
     public Map<String, MissionData> getMissions() {
