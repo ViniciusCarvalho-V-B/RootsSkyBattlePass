@@ -73,6 +73,29 @@ public class BattlePassPlugin extends JavaPlugin {
         }, 6000L, 6000L); // 5 minutos (100 ticks = 5s, 6000 ticks = 5min)
         getLogger().info("Auto-save agendado a cada 5 minutos.");
 
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+            long now = System.currentTimeMillis();
+            for (PlayerProfile profile : playerCache.values()) {
+                if (profile.isVip() && profile.getVipExpiresAt() != -1 && profile.getVipExpiresAt() < now) {
+                    profile.setVip(false);
+                    profile.setVipExpiresAt(0);
+                    try {
+                        databaseManager.savePlayerSync(profile);
+                    } catch (Exception e) {
+                        getLogger().warning("Falha ao salvar expiração VIP para " + profile.getUuid() + ": " + e.getMessage());
+                    }
+                    UUID uuid = profile.getUuid();
+                    Bukkit.getScheduler().runTask(this, () -> {
+                        Player player = Bukkit.getPlayer(uuid);
+                        if (player != null) {
+                            player.sendMessage(Utils.applyPrefix("<red>❌ <bold>VIP EXPIROU</bold> <red>Seu Battle Pass VIP expirou!</red>"));
+                        }
+                    });
+                }
+            }
+        }, 12000L, 12000L);
+        getLogger().info("Verificação de expiração VIP agendada a cada 10 minutos.");
+
         rewardManager = new RewardManager(this);
         rewardManager.setupEconomy();
 

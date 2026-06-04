@@ -114,7 +114,7 @@ public class BattlePassGUI implements InventoryHolder {
 
         if (profile == null) return;
 
-        boolean isVip = player.hasPermission("rootssky.passe.vip");
+        boolean isVip = profile.isVip();
         Component vipTag = isVip
                 ? Utils.color("<bold><gradient:#ffaa00:#ffff55>★ VIP</gradient>")
                 : Utils.color("<dark_gray>Gratuito");
@@ -323,7 +323,7 @@ public class BattlePassGUI implements InventoryHolder {
     private void preencherRecompensasVIP() {
         if (profile == null) return;
 
-        boolean isVip = player.hasPermission("rootssky.passe.vip");
+        boolean isVip = profile.isVip();
         int inicio = pagina * ITENS_POR_PAGINA + 1;
         int fim = Math.min(inicio + ITENS_POR_PAGINA - 1, maxNivel);
         int slotBase = 36; // Começa no slot 36
@@ -479,7 +479,7 @@ public class BattlePassGUI implements InventoryHolder {
 
         int count = 0;
         int currentLevel = profile.getLevel();
-        boolean isVip = player.hasPermission("rootssky.passe.vip");
+        boolean isVip = profile.isVip();
 
         for (int nivel = 1; nivel <= currentLevel; nivel++) {
             if (plugin.getRewardManager().canClaim(player, nivel, false)) {
@@ -507,7 +507,7 @@ public class BattlePassGUI implements InventoryHolder {
 
         int resgatadas = 0;
         int currentLevel = profile.getLevel();
-        boolean isVip = player.hasPermission("rootssky.passe.vip");
+        boolean isVip = profile.isVip();
 
         for (int nivel = 1; nivel <= currentLevel; nivel++) {
             // Bypassa o cooldown interno do RewardManager para cada resgate em lote
@@ -590,8 +590,8 @@ public class BattlePassGUI implements InventoryHolder {
                 int nivel = paginaAtual * ITENS_POR_PAGINA + index + 1;
                 if (nivel > maxNivel) return;
 
-                boolean isVip = player.hasPermission("rootssky.passe.vip");
-                if (!isVip) {
+                PlayerProfile profile = plugin.playerCache.get(player.getUniqueId());
+                if (profile == null || !profile.isVip()) {
                     player.sendMessage(Utils.applyPrefix(plugin.getConfigManager().getMessage("vip-required")));
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.7f, 1.0f);
                     return;
@@ -611,15 +611,15 @@ public class BattlePassGUI implements InventoryHolder {
         PlayerProfile profile = plugin.playerCache.get(player.getUniqueId());
         if (profile == null) return;
 
-        if (!plugin.getRewardManager().canClaim(player, nivel, vip)) {
-            player.sendMessage(Utils.applyPrefix(plugin.getConfigManager().getMessage("reward-already")));
+        if (profile.getLevel() < nivel) {
+            player.sendMessage(Utils.applyPrefix(plugin.getConfigManager().getMessage("reward-locked")
+                    .replace("%nivel%", String.valueOf(nivel))));
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.7f, 1.0f);
             return;
         }
 
-        if (profile.getLevel() < nivel) {
-            player.sendMessage(Utils.applyPrefix(plugin.getConfigManager().getMessage("reward-locked")
-                    .replace("%nivel%", String.valueOf(nivel))));
+        if (!plugin.getRewardManager().canClaim(player, nivel, vip)) {
+            player.sendMessage(Utils.applyPrefix(plugin.getConfigManager().getMessage("reward-already")));
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.7f, 1.0f);
             return;
         }

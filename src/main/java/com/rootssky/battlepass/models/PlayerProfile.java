@@ -20,12 +20,16 @@ public class PlayerProfile {
     private long lastDailyReset;
     private long lastWeeklyReset;
     private long lastMonthlyReset;
+    private boolean vip;
+    private long vipExpiresAt;
 
     public PlayerProfile(UUID uuid) {
         this.uuid = uuid;
         this.level = 1;
         this.xp = 0;
         this.premium = false;
+        this.vip = false;
+        this.vipExpiresAt = 0;
         this.completedMissions = new HashSet<>();
         this.claimedRewards = new HashSet<>();
         this.xpFormula = "{level} * 150";
@@ -45,6 +49,8 @@ public class PlayerProfile {
         this.lastDailyReset = 0;
         this.lastWeeklyReset = 0;
         this.lastMonthlyReset = 0;
+        this.vip = false;
+        this.vipExpiresAt = 0;
         this.modified = true;
     }
 
@@ -150,5 +156,23 @@ public class PlayerProfile {
 
     public void setLastMonthlyReset(long lastMonthlyReset) {
         this.lastMonthlyReset = lastMonthlyReset;
+    }
+
+    public boolean isVip() {
+        return vip;
+    }
+
+    public void setVip(boolean vip) {
+        this.vip = vip;
+        this.modified = true;
+    }
+
+    public long getVipExpiresAt() {
+        return vipExpiresAt;
+    }
+
+    public void setVipExpiresAt(long vipExpiresAt) {
+        this.vipExpiresAt = vipExpiresAt;
+        this.modified = true;
     }
 }

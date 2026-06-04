@@ -3,6 +3,7 @@ package com.rootssky.battlepass.commands;
 import com.rootssky.battlepass.BattlePassPlugin;
 import com.rootssky.battlepass.gui.BattlePassGUI;
 import com.rootssky.battlepass.models.PlayerProfile;
+import com.rootssky.battlepass.utils.TimeParser;
 import com.rootssky.battlepass.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -105,7 +106,8 @@ public class BattlePassCommand implements CommandExecutor, TabCompleter {
 
     private void executarGiveVip(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            sender.sendMessage(Utils.applyPrefix("<red>Uso: /passeadmin givevip <jogador>"));
+            sender.sendMessage(Utils.applyPrefix("<red>Uso: /passeadmin givevip <jogador> <tempo|permanent>"));
+            sender.sendMessage(Utils.applyPrefix("<red>Ex: /passeadmin givevip Steve 30d"));
             return;
         }
 
@@ -115,17 +117,43 @@ public class BattlePassCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        if (alvo.hasPermission("rootssky.passe.vip")) {
+        PlayerProfile profile = plugin.playerCache.get(alvo.getUniqueId());
+        if (profile == null) {
+            sender.sendMessage(Utils.applyPrefix("<red>Dados do jogador não estão carregados."));
+            return;
+        }
+
+        if (profile.isVip()) {
             sender.sendMessage(Utils.applyPrefix("<yellow>" + alvo.getName() + " já possui VIP."));
             return;
         }
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + alvo.getName() + " permission set rootssky.passe.vip true");
-        });
+        String timeStr = args.length > 2 ? args[2] : "permanent";
+        long durationMillis;
+
+        try {
+            durationMillis = TimeParser.parseToMillis(timeStr);
+        } catch (Exception e) {
+            sender.sendMessage(Utils.applyPrefix("<red>Tempo inválido! Use: 30d, 60d, 7h, permanent"));
+            return;
+        }
+
+        long expiresAt;
+        if (durationMillis == -1) {
+            expiresAt = -1;
+            alvo.sendMessage(Utils.applyPrefix("<gold>✓ Você recebeu o status <bold>VIP</bold><gold> no Passe de Batalha! (<bold>Permanente</bold>)</gold>"));
+        } else {
+            expiresAt = System.currentTimeMillis() + durationMillis;
+            int days = (int) (durationMillis / (24 * 60 * 60 * 1000));
+            alvo.sendMessage(Utils.applyPrefix("<gold>✓ Você recebeu o status <bold>VIP</bold><gold> no Passe de Batalha! (<bold>" + days + " dias</bold>)</gold>"));
+        }
+
+        profile.setVip(true);
+        profile.setVipExpiresAt(expiresAt);
+
+        plugin.getDatabaseManager().savePlayer(profile);
 
         sender.sendMessage(Utils.applyPrefix("<green>VIP concedido a " + alvo.getName() + "!"));
-        alvo.sendMessage(Utils.applyPrefix("<gold>✓ Você recebeu o status <bold>VIP</bold><gold> no Passe de Batalha!"));
     }
 
     private void executarSetLevel(CommandSender sender, String[] args) {
@@ -205,7 +233,7 @@ public class BattlePassCommand implements CommandExecutor, TabCompleter {
 
     private void enviarAjudaAdmin(CommandSender sender) {
         sender.sendMessage(Utils.applyPrefix("<gold>⚙ Comandos Administrativos:"));
-        sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin givevip <jogador> <dark_gray>- Dar VIP"));
+        sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin givevip <jogador> [tempo] <dark_gray>- Dar VIP (30d, 7h, permanent)"));
         sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin setlevel <jogador> <nível> <dark_gray>- Definir nível"));
         sender.sendMessage(Utils.applyPrefix("<gray>/passeadmin addxp <jogador> <xp> <dark_gray>- Adicionar XP"));
         sender.sendMessage(Utils.applyPrefix("<gray>/bpreset <jogador> <dark_gray>- Resetar progresso do jogador"));

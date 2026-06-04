@@ -316,7 +316,7 @@ public class MissionManager {
         String claimKey = "mission_" + missionId;
         if (profile.getClaimedRewards().contains(claimKey)) return false;
 
-        boolean isVip = player.hasPermission("rootssky.passe.vip");
+        boolean isVip = profile.isVip();
         double multiplicador = isVip ? plugin.getConfig().getDouble("settings.premium-xp-multiplier", 1.5) : 1.0;
         int xpBase = mission.xp();
         int xpFinal = (int) Math.round(xpBase * multiplicador);

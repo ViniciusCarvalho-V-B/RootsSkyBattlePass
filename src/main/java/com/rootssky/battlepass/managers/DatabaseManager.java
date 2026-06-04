@@ -31,8 +31,8 @@ public class DatabaseManager {
     private final Object connectionLock = new Object();
 
     private static final String SQL_UPSERT = """
-            INSERT INTO players (uuid, level, xp, premium, last_login, completed_missions, claimed_rewards, mission_progress, last_daily_reset, last_weekly_reset, last_monthly_reset)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO players (uuid, level, xp, premium, last_login, completed_missions, claimed_rewards, mission_progress, last_daily_reset, last_weekly_reset, last_monthly_reset, is_vip, vip_expires_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(uuid) DO UPDATE SET
                 level = excluded.level,
                 xp = excluded.xp,
@@ -43,7 +43,9 @@ public class DatabaseManager {
                 mission_progress = excluded.mission_progress,
                 last_daily_reset = excluded.last_daily_reset,
                 last_weekly_reset = excluded.last_weekly_reset,
-                last_monthly_reset = excluded.last_monthly_reset
+                last_monthly_reset = excluded.last_monthly_reset,
+                is_vip = excluded.is_vip,
+                vip_expires_at = excluded.vip_expires_at
             """;
 
     public DatabaseManager(BattlePassPlugin plugin, File dataFolder) {
@@ -103,6 +105,16 @@ public class DatabaseManager {
 
                     try {
                         stmt.execute("ALTER TABLE players ADD COLUMN last_monthly_reset TEXT NOT NULL DEFAULT ''");
+                    } catch (SQLException ignored) {
+                    }
+
+                    try {
+                        stmt.execute("ALTER TABLE players ADD COLUMN is_vip INTEGER NOT NULL DEFAULT 0");
+                    } catch (SQLException ignored) {
+                    }
+
+                    try {
+                        stmt.execute("ALTER TABLE players ADD COLUMN vip_expires_at INTEGER NOT NULL DEFAULT 0");
                     } catch (SQLException ignored) {
                     }
 
@@ -197,6 +209,9 @@ public class DatabaseManager {
                                 try { profile.setLastMonthlyReset(Long.parseLong(monthlyReset)); } catch (NumberFormatException ignored) {}
                             }
 
+                            profile.setVip(rs.getInt("is_vip") == 1);
+                            profile.setVipExpiresAt(rs.getLong("vip_expires_at"));
+
                             String formula = plugin.getConfigManager().getXpFormula();
                             profile.setXpFormula(formula);
 
@@ -230,6 +245,8 @@ public class DatabaseManager {
                     ps.setString(9, profile.getLastDailyReset() > 0 ? String.valueOf(profile.getLastDailyReset()) : "");
                     ps.setString(10, profile.getLastWeeklyReset() > 0 ? String.valueOf(profile.getLastWeeklyReset()) : "");
                     ps.setString(11, profile.getLastMonthlyReset() > 0 ? String.valueOf(profile.getLastMonthlyReset()) : "");
+                    ps.setInt(12, profile.isVip() ? 1 : 0);
+                    ps.setLong(13, profile.getVipExpiresAt());
                     ps.executeUpdate();
                 }
                 profile.setModified(false);
@@ -274,6 +291,8 @@ public class DatabaseManager {
                                 ps.setString(9, profile.getLastDailyReset() > 0 ? String.valueOf(profile.getLastDailyReset()) : "");
                                 ps.setString(10, profile.getLastWeeklyReset() > 0 ? String.valueOf(profile.getLastWeeklyReset()) : "");
                                 ps.setString(11, profile.getLastMonthlyReset() > 0 ? String.valueOf(profile.getLastMonthlyReset()) : "");
+                                ps.setInt(12, profile.isVip() ? 1 : 0);
+                                ps.setLong(13, profile.getVipExpiresAt());
                                 ps.addBatch();
                             } catch (SQLException e) {
                                 Utils.log("<red>Erro ao adicionar profile ao batch: " + profile.getUuid() + " - " + e.getMessage());

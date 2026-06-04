@@ -45,7 +45,7 @@ public class RootsSkyPlaceholderExpansion extends PlaceholderExpansion {
             case "nivel", "level" -> String.valueOf(profile.getLevel());
             case "xp" -> String.valueOf(profile.getXp());
             case "xp_requerido", "xp_necessario", "required" -> String.valueOf(profile.calculateNextLevelXP());
-            case "vip" -> offlinePlayer.isOnline() && offlinePlayer.getPlayer().hasPermission("rootssky.passe.vip") ? "VIP" : "Gratuito";
+            case "vip" -> profile.isVip() ? "VIP" : "Gratuito";
             case "missoes_completas" -> String.valueOf(profile.getCompletedMissions().size());
             case "recompensas_resgatadas" -> String.valueOf(profile.getClaimedRewards().size());
             default -> null;

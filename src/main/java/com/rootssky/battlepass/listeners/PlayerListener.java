@@ -28,6 +28,13 @@ public class PlayerListener implements Listener {
             plugin.playerCache.put(player.getUniqueId(), profile);
             plugin.getMissionManager().loadProgressFromProfile(profile);
 
+            long now = System.currentTimeMillis();
+            if (profile.isVip() && profile.getVipExpiresAt() != -1 && profile.getVipExpiresAt() < now) {
+                profile.setVip(false);
+                profile.setVipExpiresAt(0);
+                db.savePlayer(profile);
+            }
+
             plugin.getServer().getRegionScheduler().execute(plugin, player.getLocation(), () -> {
                 if (player.isOnline()) {
                     String msg = plugin.getConfigManager().getMessage("welcome")

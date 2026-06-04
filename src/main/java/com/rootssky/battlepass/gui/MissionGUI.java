@@ -180,7 +180,7 @@ public class MissionGUI implements InventoryHolder {
 
         String cor = period.getColorTag();
         String periodoLabel = period.getDisplayName();
-        boolean isVip = player.hasPermission("rootssky.passe.vip");
+        boolean isVip = profile.isVip();
         double vipMult = plugin.getConfig().getDouble("settings.premium-xp-multiplier", 1.5);
         int xpBase = missao.xp();
         int xpVip = (int) Math.round(xpBase * vipMult);

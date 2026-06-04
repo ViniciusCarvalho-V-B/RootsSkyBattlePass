@@ -66,7 +66,9 @@ public class RewardManager {
     }
 
     public void claimReward(Player player, int nivel) {
-        claimReward(player, nivel, player.hasPermission("rootssky.passe.vip"));
+        PlayerProfile profile = plugin.playerCache.get(player.getUniqueId());
+        boolean isVip = profile != null && profile.isVip();
+        claimReward(player, nivel, isVip);
     }
 
     public void claimReward(Player player, int nivel, boolean vip) {
