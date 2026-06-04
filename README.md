@@ -4,7 +4,7 @@
 
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Paper](https://img.shields.io/badge/Paper-1.21.1-blue)
-![Version](https://img.shields.io/badge/Version-1.0.0-green)
+![Version](https://img.shields.io/badge/Version-1.0.3-green)
 [![Download](https://img.shields.io/github/downloads/ViniciusCarvalho-V-B/RootsSkyBattlePass/total?color=green&label=Downloads)](https://github.com/ViniciusCarvalho-V-B/RootsSkyBattlePass/releases)
 
 ## 📖 Sobre o Plugin
@@ -29,6 +29,13 @@ O plugin foi desenvolvido pensando em uma experiência limpa e agradavel, sem ne
 - **Vault:** Sistema de economia (recompensas em dinheiro)
 - **PlaceholderAPI:** Placeholders para usar em outros plugins
 
+### ⏱️ Sistema de VIP Temporizado
+- **VIP por período:** Conceda VIP por dias, semanas ou meses (`30d`, `90d`, `180d`, `365d`)
+- **VIP Permanente:** Opção `permanent` para acesso vitalício
+- **Expiração Automática:** Sistema verifica e remove VIP expirado a cada 10 minutos
+- **Notificação:** Jogador é avisado quando seu VIP expira
+- **Persistência:** Dados salvos no banco, mantidos mesmo após restart do servidor
+
 ## 🎮 Como Funciona?
 
 ### Para Jogadores:
@@ -39,10 +46,12 @@ O plugin foi desenvolvido pensando em uma experiência limpa e agradavel, sem ne
 5. Resgate recompensas clicando nos níveis disponíveis
 6. Use "Resgatar Todas" para pegar todas as recompensas de uma vez!
 
-### Para Administradores:
+ ### Para Administradores:
 - `/passeadmin reset <player>` - Reseta o progresso do jogador
-- `/passeadmin givevip <player>` - Concede status VIP ao jogador
+- `/passeadmin givevip <player> <tempo>` - Concede VIP temporizado ou permanente
+- Exemplos: `30d` (1 mês), `90d` (3 meses), `180d` (6 meses), `365d` (1 ano), `permanent`
 - `/passeadmin setlevel <player> <nivel>` - Define o nível manualmente
+
 
 ## 📥 Download
 Acesse a página de [Releases](https://github.com/ViniciusCarvalho-V-B/RootsSkyBattlePass/releases) para ver todas as versões disponíveis.
